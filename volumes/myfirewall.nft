@@ -1,0 +1,16 @@
+#!/usr/sbin/nft -f
+
+# create the table netsec
+#   note that we don't need to use nft here, simple start the command.
+add table ip netsec_tbl
+
+# create our first chain for incoming traffic
+add chain netsec_tbl netsec_fw { type filter hook forward priority 0 ; policy drop ; comment "scripted chain" ; }
+
+# define some variables, adjust these for your ip addresses
+define client_ip = 10.10.0.4
+define server_ip = 10.10.1.5
+
+# add our first rule
+add rule netsec_tbl netsec_fw tcp dport {22, 23, 80} accept
+add rule netsec_tbl netsec_fw ip saddr $server_ip accept
